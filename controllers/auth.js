@@ -1,29 +1,89 @@
 // NECESARIO PARA CONSERVAR EL TIPADO
 const {response} = require('express');
+const bcrypt = require('bcryptjs');
+const Usuario = require('../models/Usuario');
+
 // req, res = express.response PARA MANTENER TIPADO
-const crearUsuario = (req, res = response)=>{
+const crearUsuario = async(req, res = response)=>{
     
     const {name, email, password} = req.body;
 
-    res.status(201).json({
-        ok: true,
-        msg: 'registro',
-        name,
-        email,
-        password
-    });
+    try {
+        
+        let usuario = await Usuario.findOne({email});
+
+        if(usuario){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Un usuario existe con ese correo'
+            });
+        }
+
+        usuario = new Usuario(req.body);
+
+        // ENCRIPTAR CONTRASEÑA
+        const salt = bcrypt.genSaltSync();
+        usuario.password = bcrypt.hashSync(password, salt);
+
+        await usuario.save();
+    
+        res.status(201).json({
+            ok: true,
+            uid: usuario.id,
+            name: usuario.name
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Por favor hable con el administrador'
+        });
+    }
+
 }
 
-const loginUsuario = (req, res = response)=>{
+const loginUsuario = async(req, res = response)=>{
     
     const {email, password} = req.body;
 
-    res.status(201).json({
-        ok: true,
-        msg: 'login',
-        email,
-        password
-    });
+    try {
+        
+        const usuario = await Usuario.findOne({email});
+
+        if(!usuario){
+            return res.status(400).json({
+                ok: false,
+                msg: 'El usuario no existe con ese email'
+            });
+        }
+
+        // CONFIRMAR LOS PASSWORDS
+        const validPassword = bcrypt.compareSync(password, usuario.password);
+
+        if(!validPassword){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Password incorrecto'
+            });
+        }
+
+        // GENERAR NUESTRO JWT
+
+        res.json({
+            ok: true,
+            uid: usuario.id,
+            name: usuario.name
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Por favor hable con el administrador'
+        });
+    }
+
 }
 
 
