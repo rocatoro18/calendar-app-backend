@@ -32,6 +32,7 @@ app.get('/',(req, res)=>{
 // RUTAS
 // TODO: AUTH // CREAR, LOGIN, RENEW
 app.use('/api/auth',require('./routes/auth'));
+app.use('/api/events',require('./routes/events'));
 // TODO: CRUD: EVENTOS
 
 
