@@ -10,7 +10,7 @@ const getEventos = async(req, res = response ) => {
 
     res.status(200).json({
         ok: true,
-        msg: eventos
+        eventos
     });
 
 }
