@@ -35,6 +35,7 @@ app.use('/api/auth',require('./routes/auth'));
 app.use('/api/events',require('./routes/events'));
 // TODO: CRUD: EVENTOS
 
+// PATH * AGREGADO
 // IMPORTANTE
 // REGRESAR INDEX QUE SE ENCUENTRA EN CARPETA PUBLICA
 app.get('*', (req, res) => {
