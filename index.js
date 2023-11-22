@@ -35,6 +35,11 @@ app.use('/api/auth',require('./routes/auth'));
 app.use('/api/events',require('./routes/events'));
 // TODO: CRUD: EVENTOS
 
+// IMPORTANTE
+// REGRESAR INDEX QUE SE ENCUENTRA EN CARPETA PUBLICA
+app.get('*', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
+})
 
 // ESCUCHAR PETICIONES
 app.listen(process.env.PORT,()=>{
